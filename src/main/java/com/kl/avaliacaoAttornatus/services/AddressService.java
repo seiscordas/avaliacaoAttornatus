@@ -75,15 +75,9 @@ public class AddressService {
     }
     private Person setTrueMainAddressAsFalse(Long id) {
         Person personAddress = personRepository.getReferenceById(id);
-        //if(personAddress.getAddresses().size() > 0){
-        if(!personAddress.getAddresses().isEmpty()){
-            personAddress.getAddresses().stream()
-                    .filter(Address::getMainAddress)
-                    .toList().stream()
-                    .findFirst()
-                    .orElseThrow()
-                    .setMainAddress(false);
-        }
+        personAddress.getAddresses().stream()
+                .filter(Address::getMainAddress)
+                .forEach(it -> it.setMainAddress(false));
         return personAddress;
     }
     private void copyDtoToEntity(AddressDTO dto, Address entity){
