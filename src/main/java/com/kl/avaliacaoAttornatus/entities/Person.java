@@ -29,8 +29,9 @@ public class Person implements Serializable {
     private String name;
     private LocalDate birthDate;
 
-    @Setter(AccessLevel.NONE)
-    @OneToMany(targetEntity=Address.class, mappedBy="person", fetch=FetchType.EAGER)
+    //@OneToMany(targetEntity=Address.class, mappedBy="person", fetch=FetchType.EAGER)
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    @OneToMany
     private List<Address> addresses = new ArrayList<>();
 
     public Person(PersonDTO personDTO) {

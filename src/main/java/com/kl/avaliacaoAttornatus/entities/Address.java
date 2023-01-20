@@ -1,17 +1,25 @@
 package com.kl.avaliacaoAttornatus.entities;
 
+import com.kl.avaliacaoAttornatus.dto.AddressDTO;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.Hibernate;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tb_address")
 public class Address implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,22 +27,22 @@ public class Address implements Serializable {
     private String zipCode;
     private String number;
     private String city;
-
     private Boolean mainAddress;
-    @Setter(AccessLevel.NONE)
+
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;
 
-    public Address() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Address address = (Address) o;
+        return id != null && Objects.equals(id, address.id);
     }
 
-    public Address(Long id, String street, String zipCode, String number, String city, Boolean mainAddress) {
-        this.id = id;
-        this.street = street;
-        this.zipCode = zipCode;
-        this.number = number;
-        this.city = city;
-        this.mainAddress = mainAddress;
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

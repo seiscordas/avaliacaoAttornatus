@@ -24,11 +24,18 @@ public class PersonDTO implements Serializable {
     private String name;
     private LocalDate birthDate;
 
-    private List<Address> addresses = new ArrayList<>();
+    private List<AddressDTO> addresses = new ArrayList<AddressDTO>();
 
     public PersonDTO(Person entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.birthDate = entity.getBirthDate();
+    }
+
+    public PersonDTO(Person entity, List<Address> addresses) {
+        this(entity);
+        addresses.forEach(address -> {
+            this.addresses.add(new AddressDTO(address));
+        });
     }
 }

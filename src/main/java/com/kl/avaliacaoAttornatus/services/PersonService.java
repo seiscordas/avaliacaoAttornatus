@@ -28,21 +28,18 @@ public class PersonService {
         List<Person> list = repository.findAll();
         return list.stream().map(PersonDTO::new).collect(Collectors.toList());
     }
-
     @Transactional(readOnly = true)
     public PersonDTO findById(Long id) {
         Optional<Person> obj = repository.findById(id);
-        Person entity = obj.orElseThrow(() -> new ResourceNotFoundException("Registro não encontrado"));
-        return new PersonDTO(entity);
+        Person entity = obj.orElseThrow(() -> new ResourceNotFoundException("Id not found " + id));
+        return new PersonDTO(entity, entity.getAddresses());
     }
-
     @Transactional
     public PersonDTO insert(PersonDTO personDTO) {
         Person entity = new Person(personDTO);
         entity = repository.save(entity);
         return new PersonDTO(entity);
     }
-
     @Transactional
     public PersonDTO update(Long id, PersonDTO dto) {
         try {
@@ -54,7 +51,6 @@ public class PersonService {
             throw new ResourceNotFoundException("Id not found " + id);
         }
     }
-
     public void delete(Long id) {
         try {
             repository.deleteById(id);
