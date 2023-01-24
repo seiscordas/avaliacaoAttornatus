@@ -14,7 +14,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -29,10 +28,15 @@ public class Person implements Serializable {
     private String name;
     private LocalDate birthDate;
 
-    //@OneToMany(targetEntity=Address.class, mappedBy="person", fetch=FetchType.EAGER)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    @OneToMany
+    @OneToMany()
     private List<Address> addresses = new ArrayList<>();
+
+    public Person(Long id, String name, LocalDate birthDate) {
+        this.id = id;
+        this.name = name;
+        this.birthDate = birthDate;
+    }
 
     public Person(PersonDTO personDTO) {
         this.setName(personDTO.getName());

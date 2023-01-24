@@ -29,8 +29,8 @@ public class Address implements Serializable {
     private String city;
     private Boolean mainAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "person_id")
+    @ManyToOne()
+    @JoinColumn(name = "person_id", nullable=false)
     private Person person;
 
     @Override

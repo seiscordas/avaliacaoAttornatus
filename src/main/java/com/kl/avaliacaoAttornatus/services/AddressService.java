@@ -34,6 +34,7 @@ public class AddressService {
     @Transactional(readOnly = true)
     public List<AddressDTO> findAllByPersonId(Long id) {
         Person person = personRepository.findById(id).orElseThrow();
+        //Person person = personRepository.getReferenceById(id);
         List<Address> entity = addressRepository.findAllByPerson(person);
         return entity.stream()
                 .map(AddressDTO::new)
@@ -41,22 +42,25 @@ public class AddressService {
     }
     @Transactional
     public AddressDTO insert(AddressDTO dto) {
-        Address entity = new Address();
-        copyDtoToEntity(dto, entity);
+        try {
+            Address entity = new Address();
+            copyDtoToEntity(dto, entity);
 
-        if(dto.getMainAddress()){
-            entity.setPerson(setTrueMainAddressAsFalse(dto.getPersonId()));
+            if (dto.getMainAddress()) {
+                entity.setPerson(setTrueMainAddressAsFalse(dto.getPersonId()));
+            }
+            entity = addressRepository.save(entity);
+            return new AddressDTO(entity);
+        }catch (EntityNotFoundException e){
+            throw new ResourceNotFoundException("Reference not found");
         }
-
-        entity = addressRepository.save(entity);
-        return new AddressDTO(entity);
     }
     @Transactional
     public AddressDTO update(Long id, AddressDTO dto) {
         try {
             Address entity = addressRepository.getReferenceById(id);
 
-            if(dto.getMainAddress()) {
+            if(dto.getMainAddress() && !entity.getMainAddress()) {
                 setTrueMainAddressAsFalse(entity.getPerson().getId());
             }
 
