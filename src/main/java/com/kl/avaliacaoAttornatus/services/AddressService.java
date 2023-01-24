@@ -33,8 +33,7 @@ public class AddressService {
     }
     @Transactional(readOnly = true)
     public List<AddressDTO> findAllByPersonId(Long id) {
-        Person person = personRepository.findById(id).orElseThrow();
-        //Person person = personRepository.getReferenceById(id);
+        Person person = personRepository.getReferenceById(id);
         List<Address> entity = addressRepository.findAllByPerson(person);
         return entity.stream()
                 .map(AddressDTO::new)

@@ -5,6 +5,7 @@ import com.kl.avaliacaoAttornatus.entities.Address;
 import com.kl.avaliacaoAttornatus.entities.Person;
 import com.kl.avaliacaoAttornatus.repositories.AddressRepository;
 import com.kl.avaliacaoAttornatus.repositories.PersonRepository;
+import com.kl.avaliacaoAttornatus.services.exceptions.DatabaseException;
 import com.kl.avaliacaoAttornatus.services.exceptions.ResourceNotFoundException;
 import com.kl.avaliacaoAttornatus.tests.Factory;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -57,11 +57,35 @@ public class AddressServiceTests {
 
         Mockito.when(personRepository.getReferenceById(existingId)).thenReturn(person);
         Mockito.when(personRepository.getReferenceById(existingId)).thenReturn(person);
-        Mockito.when(personRepository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);
+        Mockito.when(personRepository.getReferenceById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
+        Mockito.when(addressRepository.getReferenceById(existingId)).thenReturn(address);
 
         Mockito.doNothing().when(addressRepository).deleteById(existingId);
         Mockito.doThrow(EmptyResultDataAccessException.class).when(addressRepository).deleteById(nonExistingId);
-        Mockito.doThrow(DataIntegrityViolationException.class).when(addressRepository).deleteById(dependentId);
+        Mockito.doThrow(DatabaseException.class).when(addressRepository).deleteById(dependentId);
+    }
+
+    @Test
+    public void findAllByPersonShouldThrowExceptionWhenPersonDoesNotExist() {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.findAllByPersonId(nonExistingId));
+    }
+
+    @Test
+    public void findAllByPersonShouldReturnAllByPerson() {
+        List<AddressDTO> result = service.findAllByPersonId(dependentId);
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    public void deleteShouldThrowDatabaseExceptionWhenDependentId() {
+        Assertions.assertThrows(DatabaseException.class, () -> service.delete(dependentId));
+        Mockito.verify(addressRepository, Mockito.times(1)).deleteById(dependentId);
+    }
+
+    @Test
+    public void updateShouldReturnAddressDTOWhenIdExists() {
+        AddressDTO result = service.update(addressDTO.getId(), addressDTO);
+        Assertions.assertNotNull(result);
     }
 
     @Test
@@ -77,17 +101,13 @@ public class AddressServiceTests {
 
     @Test
     public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-            service.delete(nonExistingId);
-        });
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.delete(nonExistingId));
         Mockito.verify(addressRepository, Mockito.times(1)).deleteById(nonExistingId);
     }
 
     @Test
     public void deleteShouldDoNothingWhenIdExists() {
-        Assertions.assertDoesNotThrow(() -> {
-            service.delete(existingId);
-        });
+        Assertions.assertDoesNotThrow(() -> service.delete(existingId));
         Mockito.verify(addressRepository, Mockito.times(1)).deleteById(existingId);
     }
 }

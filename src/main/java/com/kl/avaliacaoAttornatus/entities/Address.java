@@ -1,6 +1,5 @@
 package com.kl.avaliacaoAttornatus.entities;
 
-import com.kl.avaliacaoAttornatus.dto.AddressDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;

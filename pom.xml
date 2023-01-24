@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kl</groupId>
-	<artifactId>avaliacaoAttornatus</artifactId>
+	<artifactId>avaliacao-attornatus</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>avaliacaoAttornatus</name>
+	<name>avaliacao-attornatus</name>
 	<description>Avaliação Desenvolvedor Back-end Attornatus</description>
 	<properties>
 		<java.version>17</java.version>
